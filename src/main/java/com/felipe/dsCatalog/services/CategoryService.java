@@ -3,7 +3,7 @@ package com.felipe.dsCatalog.services;
 import com.felipe.dsCatalog.dto.CategoryDTO;
 import com.felipe.dsCatalog.entities.Category;
 import com.felipe.dsCatalog.repositories.CategoryRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.felipe.dsCatalog.services.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
        Optional<Category> obj = repository.findById(id);
-       Category entity = obj.get();
+       Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Recurso não encontrado"));
        return new CategoryDTO(entity);
     }
 
