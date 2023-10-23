@@ -4,7 +4,8 @@ import com.felipe.dsCatalog.dto.CategoryDTO;
 import com.felipe.dsCatalog.entities.Category;
 import com.felipe.dsCatalog.repositories.CategoryRepository;
 import com.felipe.dsCatalog.services.exceptions.DataBaseException;
-import com.felipe.dsCatalog.services.exceptions.EntityNotFoundException;
+import com.felipe.dsCatalog.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
        Optional<Category> obj = repository.findById(id);
-       Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Recurso não encontrado"));
+       Category entity = obj.orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
        return new CategoryDTO(entity);
     }
 
@@ -48,15 +49,15 @@ public class CategoryService {
             entity.setName(dto.getName());
             entity =  repository.save(entity);
             return new CategoryDTO(entity);
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            throw new EntityNotFoundException("Recurso não encontrado");
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Recurso não encontrado");
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("Recurso não encontrado");
+            throw new ResourceNotFoundException("Recurso não encontrado");
         }
         try {
             repository.deleteById(id);
