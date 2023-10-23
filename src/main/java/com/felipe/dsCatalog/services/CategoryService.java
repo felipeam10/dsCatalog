@@ -37,4 +37,16 @@ public class CategoryService {
         entity =  repository.save(entity);
         return new CategoryDTO(entity);
     }
+
+    @Transactional
+    public CategoryDTO update(Long id, CategoryDTO dto) {
+        try {
+            Category entity = repository.getReferenceById(id);
+            entity.setName(dto.getName());
+            entity =  repository.save(entity);
+            return new CategoryDTO(entity);
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            throw new EntityNotFoundException("Recurso não encontrado");
+        }
+    }
 }
