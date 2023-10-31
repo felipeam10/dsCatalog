@@ -1,6 +1,7 @@
 package com.felipe.dsCatalog.services;
 
 import com.felipe.dsCatalog.repositories.ProductRepository;
+import com.felipe.dsCatalog.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,5 +43,14 @@ public class ProductServiceTests {
         });
         Mockito.verify(repository, Mockito.times(1)).deleteById(existingId);
     }
+
+    @Test
+    public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesExist() {
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.delete(nonExistingId);
+        });
+    }
+
 
 }
