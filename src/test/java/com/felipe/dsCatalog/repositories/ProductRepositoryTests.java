@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.Optional;
 
@@ -30,7 +28,7 @@ public class ProductRepositoryTests {
 
     @Test
     public void saveShouldPersistWithAutoincrement() {
-        Product product = Factory.createdProduct();
+        Product product = Factory.createProduct();
         product.setId(null);
         product = repository.save(product);
         Assertions.assertNotNull(product.getId());

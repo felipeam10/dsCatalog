@@ -1,19 +1,20 @@
 package com.felipe.dsCatalog.services;
 
 import com.felipe.dsCatalog.dto.ProductDTO;
+import com.felipe.dsCatalog.entities.Category;
 import com.felipe.dsCatalog.entities.Product;
+import com.felipe.dsCatalog.repositories.CategoryRepository;
 import com.felipe.dsCatalog.repositories.ProductRepository;
 import com.felipe.dsCatalog.services.exceptions.DataBaseException;
 import com.felipe.dsCatalog.services.exceptions.ResourceNotFoundException;
 import com.felipe.dsCatalog.tests.Factory;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,19 +31,25 @@ public class ProductServiceTests {
     private ProductService service;
     @Mock
     private ProductRepository repository;
+    @Mock
+    private CategoryRepository categoryRepository;
     private Long existingId;
     private Long nonExistingId;
     private Long dependentId;
     private PageImpl<Product> page;
     private Product product;
+    private Category category;
+    private ProductDTO productDTO;
 
     @BeforeEach
     public void setUp() throws Exception {
         existingId = 1L;
         nonExistingId = 2L;
         dependentId = 3L;
-        product = Factory.createdProduct();
+        product = Factory.createProduct();
         page = new PageImpl<>(List.of(product));
+        category = Factory.createCategory();
+        productDTO = Factory.createProductDTO();
 
         Mockito.doNothing().when(repository).deleteById(existingId);
         Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
@@ -59,6 +66,14 @@ public class ProductServiceTests {
         Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(product));
 
         Mockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
+
+        Mockito.when(repository.getOne(existingId)).thenReturn(product);
+
+        Mockito.when(repository.getOne(nonExistingId)).thenThrow(EntityNotFoundException.class);
+
+        Mockito.when(categoryRepository.getOne(existingId)).thenReturn(category);
+
+        Mockito.when(categoryRepository.getOne(nonExistingId)).thenThrow(EntityNotFoundException.class);
     }
 
     @Test
@@ -70,7 +85,7 @@ public class ProductServiceTests {
     }
 
     @Test
-    public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesExist() {
+    public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             service.delete(nonExistingId);
@@ -90,6 +105,34 @@ public class ProductServiceTests {
         Page<ProductDTO> result = service.findAllPaged(pageable);
         Assertions.assertNotNull(result);
         Mockito.verify(repository).findAll(pageable);
+    }
+
+    @Test
+    public void findByIdShouldReturnProductDtoWhenIDExists() {
+        ProductDTO result = service.findById(existingId);
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    public void findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.findById(nonExistingId);
+        });
+    }
+
+    @Test
+    public void updateShouldReturnProductDTOWhenIdExists() {
+        ProductDTO result = service.update(existingId, productDTO);
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    public void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.update(nonExistingId, productDTO);
+        });
     }
 
 }
