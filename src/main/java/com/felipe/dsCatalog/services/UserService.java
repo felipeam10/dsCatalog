@@ -3,6 +3,7 @@ package com.felipe.dsCatalog.services;
 import com.felipe.dsCatalog.dto.CategoryDTO;
 import com.felipe.dsCatalog.dto.RoleDTO;
 import com.felipe.dsCatalog.dto.UserDTO;
+import com.felipe.dsCatalog.dto.UserInsertDTO;
 import com.felipe.dsCatalog.entities.Category;
 import com.felipe.dsCatalog.entities.Role;
 import com.felipe.dsCatalog.entities.User;
@@ -17,6 +18,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,8 @@ import java.util.Optional;
 
 public class UserService {
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository repository;
 
@@ -44,9 +49,10 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO insert(UserDTO dto) {
+    public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
         copyDtoToEntity(dto, entity);
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity =  repository.save(entity);
         return new UserDTO(entity);
     }

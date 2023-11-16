@@ -1,12 +1,8 @@
 package com.felipe.dsCatalog.dto;
 
-import com.felipe.dsCatalog.entities.Product;
 import com.felipe.dsCatalog.entities.User;
-import jakarta.persistence.Column;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class UserDTO {
