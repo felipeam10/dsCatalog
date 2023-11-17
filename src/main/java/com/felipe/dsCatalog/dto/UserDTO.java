@@ -1,14 +1,18 @@
 package com.felipe.dsCatalog.dto;
 
 import com.felipe.dsCatalog.entities.User;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class UserDTO {
     private Long id;
+    @NotEmpty(message = "Campo obrigatório")
     private String firstName;
     private String lastName;
+    @Email(message = "Favor inserir e-mail válido")
     private String email;
     private Set<RoleDTO> roles = new HashSet<>();
     public UserDTO(){}
