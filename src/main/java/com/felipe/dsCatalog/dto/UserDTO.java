@@ -1,6 +1,7 @@
 package com.felipe.dsCatalog.dto;
 
 import com.felipe.dsCatalog.entities.User;
+import com.felipe.dsCatalog.services.validation.UserUpdateValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 

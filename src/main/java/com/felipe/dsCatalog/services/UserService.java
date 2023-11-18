@@ -1,9 +1,6 @@
 package com.felipe.dsCatalog.services;
 
-import com.felipe.dsCatalog.dto.CategoryDTO;
-import com.felipe.dsCatalog.dto.RoleDTO;
-import com.felipe.dsCatalog.dto.UserDTO;
-import com.felipe.dsCatalog.dto.UserInsertDTO;
+import com.felipe.dsCatalog.dto.*;
 import com.felipe.dsCatalog.entities.Category;
 import com.felipe.dsCatalog.entities.Role;
 import com.felipe.dsCatalog.entities.User;
@@ -60,7 +57,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO update(Long id, UserDTO dto) {
+    public UserDTO update(Long id, UserUpdateDTO dto) {
         try {
             User entity = repository.getOne(id);
             copyDtoToEntity(dto, entity);
