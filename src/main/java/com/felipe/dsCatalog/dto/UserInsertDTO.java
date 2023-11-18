@@ -1,5 +1,9 @@
 package com.felipe.dsCatalog.dto;
 
+import com.felipe.dsCatalog.services.validation.UserInsertValid;
+
+/* Esta anotation vai verificar se o email inserido já existe no banco de dados */
+@UserInsertValid
 public class UserInsertDTO extends UserDTO{
 
     private String password;
