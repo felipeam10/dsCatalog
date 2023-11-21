@@ -31,10 +31,10 @@ public class User implements UserDetails {
 
     public User(){}
 
-    public User(Long id, String firstName, String latName, String email, String password) {
+    public User(Long id, String firstName, String lastName, String email, String password) {
         this.id = id;
         this.firstName = firstName;
-        this.lastName = latName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
     }
