@@ -1,6 +1,7 @@
 package com.felipe.dsCatalog.resources;
 
 import com.felipe.dsCatalog.dto.ProductDTO;
+import com.felipe.dsCatalog.projections.ProductProjection;
 import com.felipe.dsCatalog.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,16 @@ public class ProductResource {
     private ProductService service;
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
-        Page<ProductDTO> list = service.findAllPaged(pageable);
+    public ResponseEntity<Page<ProductProjection>> findAll(Pageable pageable) {
+        Page<ProductProjection> list = service.testQuery(pageable);
         return ResponseEntity.ok().body(list);
     }
+
+//    @GetMapping
+//    public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
+//        Page<ProductDTO> list = service.findAllPaged(pageable);
+//        return ResponseEntity.ok().body(list);
+//    }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @GetMapping(value = "/{id}")

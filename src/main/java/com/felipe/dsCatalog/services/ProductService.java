@@ -4,6 +4,7 @@ import com.felipe.dsCatalog.dto.CategoryDTO;
 import com.felipe.dsCatalog.dto.ProductDTO;
 import com.felipe.dsCatalog.entities.Category;
 import com.felipe.dsCatalog.entities.Product;
+import com.felipe.dsCatalog.projections.ProductProjection;
 import com.felipe.dsCatalog.repositories.CategoryRepository;
 import com.felipe.dsCatalog.repositories.ProductRepository;
 import com.felipe.dsCatalog.services.exceptions.DataBaseException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -90,5 +92,10 @@ public class ProductService {
             Category cat = categoryRepository.getOne(catDto.getId());
             entity.getCategories().add(cat);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductProjection> testQuery(Pageable pageable) {
+        return repository.searchProducts(Arrays.asList(1L, 3L), "ma", pageable);
     }
 }
