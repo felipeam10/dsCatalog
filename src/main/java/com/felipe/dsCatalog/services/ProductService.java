@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,11 +32,11 @@ public class ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Transactional(readOnly = true)
-    public Page<ProductDTO> findAllPaged(Pageable pageable) {
-        Page<Product> list = repository.findAll(pageable);
-        return list.map(x -> new ProductDTO(x));
-    }
+//    @Transactional(readOnly = true)
+//    public Page<ProductDTO> findAllPaged(Pageable pageable) {
+//        Page<Product> list = repository.findAll(pageable);
+//        return list.map(x -> new ProductDTO(x));
+//    }
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
@@ -95,7 +96,12 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductProjection> testQuery(Pageable pageable) {
-        return repository.searchProducts(Arrays.asList(), "", pageable);
+    public Page<ProductProjection> findAllPaged(String name, String categoryId, Pageable pageable) {
+        List<Long> categoryIds = Arrays.asList();
+        if(!"0".equals(categoryId)) {
+            categoryIds = Arrays.asList(categoryId.split(",")).stream().map(x -> Long.parseLong(x)).toList();
+        }
+
+        return repository.searchProducts(categoryIds, name, pageable);
     }
 }
