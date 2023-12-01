@@ -16,11 +16,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,9 +38,11 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository repository;
-
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Transactional(readOnly = true)
     public Page<UserDTO> findAllPaged(Pageable pageable) {
@@ -49,6 +54,12 @@ public class UserService implements UserDetailsService {
     public UserDTO findById(Long id) {
         Optional<User> obj = repository.findById(id);
         User entity = obj.orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
+        return new UserDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO findMe() {
+        User entity = authenticated();
         return new UserDTO(entity);
     }
 
@@ -119,5 +130,17 @@ public class UserService implements UserDetailsService {
             user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
         }
         return user;
+    }
+
+    protected User authenticated() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+            String username = jwtPrincipal.getClaim("username");
+            return userRepository.findByEmail(username);
+        }
+        catch (Exception e) {
+            throw new UsernameNotFoundException("Invalid user");
+        }
     }
 }
