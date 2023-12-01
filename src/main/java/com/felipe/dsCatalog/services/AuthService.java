@@ -1,6 +1,7 @@
 package com.felipe.dsCatalog.services;
 
 import com.felipe.dsCatalog.dto.EmailDTO;
+import com.felipe.dsCatalog.dto.NewPasswordDTO;
 import com.felipe.dsCatalog.entities.PasswordRecover;
 import com.felipe.dsCatalog.entities.User;
 import com.felipe.dsCatalog.repositories.PasswordRecoverRepository;
@@ -8,10 +9,12 @@ import com.felipe.dsCatalog.repositories.UserRepository;
 import com.felipe.dsCatalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,6 +30,9 @@ public class AuthService {
     private UserRepository userRepository;
     @Autowired
     private PasswordRecoverRepository passwordRecoverRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EmailService emailService;
@@ -52,5 +58,15 @@ public class AuthService {
 
         emailService.sendEmail(body.getEmail(), "Recuperação de senha", text);
     }
-    
+
+    @Transactional
+    public void saveNewPassword(NewPasswordDTO body) {
+        List<PasswordRecover> result = passwordRecoverRepository.searchValidTokens(body.getToken(), Instant.now());
+        if (result.size() == 0) {
+            throw new ResourceNotFoundException("Token inválido");
+        }
+        User user = userRepository.findByEmail(result.get(0).getEmail());
+        user.setPassword(passwordEncoder.encode(body.getPassword()));
+        user = userRepository.save(user);
+    }
 }
