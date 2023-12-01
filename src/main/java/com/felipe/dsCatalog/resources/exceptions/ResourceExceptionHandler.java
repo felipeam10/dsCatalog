@@ -1,6 +1,7 @@
 package com.felipe.dsCatalog.resources.exceptions;
 
 import com.felipe.dsCatalog.services.exceptions.DataBaseException;
+import com.felipe.dsCatalog.services.exceptions.EmailException;
 import com.felipe.dsCatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,20 @@ public class ResourceExceptionHandler {
         for(FieldError f : e.getBindingResult().getFieldErrors()) {
             err.addError(f.getField(), f.getDefaultMessage());
         }
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<StandartError> email(EmailException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandartError err = new StandartError();
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError("Email exception");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
 
         return ResponseEntity.status(status).body(err);
     }
