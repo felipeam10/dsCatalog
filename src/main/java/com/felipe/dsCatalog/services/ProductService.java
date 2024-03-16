@@ -34,11 +34,11 @@ public class ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-//    @Transactional(readOnly = true)
-//    public Page<ProductDTO> findAllPaged(Pageable pageable) {
-//        Page<Product> list = repository.findAll(pageable);
-//        return list.map(x -> new ProductDTO(x));
-//    }
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> findAllPaged(Pageable pageable) {
+        Page<Product> list = repository.findAll(pageable);
+        return list.map(x -> new ProductDTO(x));
+    }
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
