@@ -1,7 +1,7 @@
 package com.felipe.dsCatalog.resources;
 
 import com.felipe.dsCatalog.dto.ProductDTO;
-import com.felipe.dsCatalog.projections.ProductProjection;
+import com.felipe.dsCatalog.dto.UriDTO;
 import com.felipe.dsCatalog.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -49,6 +50,12 @@ public class ProductResource {
         dto = service.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
+    }
+
+    @PostMapping(value = "/image")
+    public ResponseEntity<UriDTO> uploadImage(@RequestParam("file") MultipartFile file) {
+        UriDTO dto = service.uploadFile(file);
+        return ResponseEntity.ok().body(dto);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")

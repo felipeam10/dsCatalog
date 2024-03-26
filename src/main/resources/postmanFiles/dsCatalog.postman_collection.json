@@ -86,6 +86,60 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Recover Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"felipeam10@hotmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/recover-token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"recover-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"7f9a7062-c856-4d19-99bd-74c3c5e73877\",\r\n    \"password\": \"asdf1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/new-password",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"new-password"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -434,6 +488,44 @@
 					"response": []
 				},
 				{
+					"name": "Upload image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1eeeb292-b517-4810-a2ac-a85f38353461"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/products/image",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Product",
 					"request": {
 						"auth": {
@@ -667,6 +759,69 @@
 							"path": [
 								"users",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User logged",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Email",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"to\": \"felipeam10@hotmail.com\",\r\n    \"subject\": \"Aviso aos clientes\",\r\n    \"body\": \"Prezado cliente,\\n\\nAcesse agora:\\n\\nhttps://devsuperior.com.br\\n\\nAbraços!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/email",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"email"
 							]
 						}
 					},

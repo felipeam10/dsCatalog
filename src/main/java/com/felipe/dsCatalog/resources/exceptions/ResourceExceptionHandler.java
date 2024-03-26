@@ -1,5 +1,7 @@
 package com.felipe.dsCatalog.resources.exceptions;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.felipe.dsCatalog.services.exceptions.DataBaseException;
 import com.felipe.dsCatalog.services.exceptions.EmailException;
 import com.felipe.dsCatalog.services.exceptions.ResourceNotFoundException;
@@ -69,6 +71,48 @@ public class ResourceExceptionHandler {
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
         err.setError("Email exception");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(AmazonServiceException.class)
+    public ResponseEntity<StandartError> amazonService(AmazonServiceException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandartError err = new StandartError();
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError("AWS Exception");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(AmazonClientException.class)
+    public ResponseEntity<StandartError> amazonClient(AmazonClientException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandartError err = new StandartError();
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError("AWS Exception");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandartError> illegalArgument(IllegalArgumentException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandartError err = new StandartError();
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError("Bad Request Exception");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 

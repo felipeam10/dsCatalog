@@ -2,6 +2,7 @@ package com.felipe.dsCatalog.services;
 
 import com.felipe.dsCatalog.dto.CategoryDTO;
 import com.felipe.dsCatalog.dto.ProductDTO;
+import com.felipe.dsCatalog.dto.UriDTO;
 import com.felipe.dsCatalog.entities.Category;
 import com.felipe.dsCatalog.entities.Product;
 import com.felipe.dsCatalog.projections.ProductProjection;
@@ -20,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,9 @@ public class ProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(Pageable pageable) {
@@ -112,5 +118,10 @@ public class ProductService {
         List<ProductDTO> dtos = entities.stream().map(p -> new ProductDTO(p, p.getCategories())).toList();
 
         return new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
+    }
+
+    public UriDTO uploadFile(MultipartFile file) {
+        URL url = s3Service.uploadFile(file);
+        return new UriDTO(url.toString());
     }
 }
